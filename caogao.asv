@@ -1,0 +1,168 @@
+% mask =  open('I:\mask.png')
+% mask = mask.cdata(:,:,1)
+% mask = im2bw(mask)
+% mask_ = 1-mask
+% data = load('I:\mayo_data_low_dose_256\test\label_single\data_1939.mat')
+% data = data.data
+% im = single(mask_).*single(data) + mask
+% figure()
+% imshow(im)
+
+data = load('I:\mayo_data_low_dose_256\test\label_single\data_1939.mat')
+data = data.data
+mask = load('I:\ms\mask1.mat')
+mask = mask.data
+mask_ = 1-mask
+im = single(mask_).*data + single(mask)
+figure()
+  imshow(im)
+si = radon(im,0:180)
+imm = iradon(si,0:180)
+figure()
+imshow(imm)
+
+
+
+figure()
+  R1 = radon(im)
+  imshow(R1,[])
+figure()
+  R2 = radon(mask)
+  imshow(R2,[])
+figure()
+  R3 = radon(data)
+  imshow(R3,[])
+  
+figure()
+  R4 = R1-R3
+  imshow(R4,[])
+figure()
+  R5 = im2bw(R4)
+  imshow(R5)
+  
+PathRoot='I:/ms/';
+list=dir(fullfile(PathRoot));
+fileNum = size(list,1)-2;
+for k=3:fileNum
+	list(k).name  % 这是文件名，如果有子文件夹，则也包含在里面。
+    imshow([PathRoot,list(k).name])
+end
+
+
+
+data = load('I:\mayo_data_low_dose_256\train\label_single\data_0001.mat')
+
+imshow(data.data)
+
+
+im_root = 'I:\mayo_data_low_dose_256\train\label_single\'
+im_list=dir(fullfile(im_root));
+im_fileNum = size(im_list,1)-2;
+for k=3:im_fileNum
+	im_list(k).name  % 这是文件名，如果有子文件夹，则也包含在里面。
+%     imshow([PathRoot,list(k).name])
+end
+
+
+
+
+
+
+
+
+data = load('I:\mayo_data_low_dose_256\train\label_single\data_0001.mat')
+imshow(data.data)
+
+
+mask_root='I:/ms/';
+mask_list=dir(fullfile(PathRoot));
+mask_fileNum = size(mask_list,1)-2;
+for k=3:mask_fileNum
+	mask_list(k).name  % 这是文件名，如果有子文件夹，则也包含在里面。
+    imshow([mask_root,mask_list(k).name])
+end
+
+
+
+ 
+
+
+
+
+
+
+
+mask_root='I:/ms/';
+mask_list=dir(fullfile(mask_root));
+mask_fileNum = size(mask_list,1)-2;
+im_root = 'I:/mayo_data_low_dose_256/train/label_single/'
+im_list=dir(fullfile(im_root));
+im_fileNum = size(im_list,1)-2;
+num = 0;
+for i=3:5
+% 	im_list(i).name  % 这是文件名，如果有子文件夹，则也包含在里面。
+%     imshow([im_root,list(k).name])
+    im_name = [im_root,im_list(i).name];
+    img = load(im_name);
+    img = img.data;
+    R3 = radon(img)%没加mask的
+    save(['I:/mar_imgs/P_img/p_img',num2str(num),'.mat'],'R3');
+    for j=3:5
+%         mask_list(j).name  % 这是文件名，如果有子文件夹，则也包含在里面。
+%         imshow([mask_root,mask_list(j).name])
+        num = num+1;
+        mask_name = [mask_root,mask_list(j).name];
+        mask = load(mask_name);
+        mask = mask.data;
+        mask_ = 1-mask;
+        im = single(mask_).*img + single(mask);
+%         im = single(mask_).*data + single(mask)
+        R1 = radon(im,0:179);%加了metal之后的
+        R2 = radon(mask);%mask
+        %mask的投影域mask异值处理
+        R4 = R2>0;
+        %将数组转化为0-255再保存,保存成.mat文件也是可以的
+        save(['I:\mar_imgs\P_img_metal\p_img_metal',num2str(num),'.mat'],'R1');
+        save(['I:\mar_imgs\P_mask\p_mask',num2str(num),'.mat'],'R2');
+        save(['I:\mar_imgs\P_mask2\p_mask_b',num2str(num),'.mat'],'R4');
+        imwrite(im,['I:\mar_imgs\img_metal\',num2str(num),'.jpeg'])       
+    end
+end
+
+% 
+% I1 = iradon(im_im.R1,0:179)
+% figure()
+%   imshow(im.data)
+% 
+% save('I:\MAR_images\P_img_metal\',num2str(1),'file1.mat','R1')
+% save('I:\MAR_images\P_img_metal\file1.mat','R1')
+% save(['I:\MAR_images\P_img_metal\file',num2str(i),'.mat'],'R1')
+% 
+% mask_.*data + mask
+im1 = load('I:\mayo_data_low_dose_256\train\label\data_0001.mat')
+im2 = load('I:\mayo_data_low_dose_256\train\label_single\data_0001.mat')
+figure()
+  imshow(im1.data)
+figure()
+  imshow(im2.data)
+   
+figure()
+  p_img = load('I:\mar_imgs\P_img\p_img0.mat')
+  p_img = iradon(p_img.R3,0:179)
+  imshow(p_img,[])
+figure()
+  p_img = load('I:\mar_imgs\P_img_metal\p_img_metal1.mat')
+  p_img = iradon(p_img.R1,0:179)
+  imshow(p_img)
+figure()
+  p_img = load('I:\mar_imgs\P_mask\p_mask1.mat')
+  p_img = iradon(p_img.R2,0:179)
+  imshow(p_img,[])
+
+figure()
+  imshow(imData.imRaw)
+figure()
+  imshow(imData.imRef)
+figure()
+  imshow(imData.metalBW)
+
